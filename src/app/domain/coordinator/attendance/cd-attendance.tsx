@@ -8,11 +8,23 @@ import "leaflet/dist/leaflet.css";
 import config from "../../../../config";
 
 const Attendance: React.FC = () => {
-  const [attendanceData, setAttendanceData] = useState([]);
+  interface AttendanceItem {
+    time_id?: string;
+    date?: string;
+    student_name?: string;
+    company_name?: string;
+    am_in?: string;
+    am_out?: string;
+    pm_in?: string;
+    pm_out?: string;
+    location?: string;
+    address?: string;
+  }
+  
+  const [attendanceData, setAttendanceData] = useState<AttendanceItem[]>([]);
   const [showMapModal, setShowMapModal] = useState(false);
   const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const storedCoordinatorId = localStorage.getItem("coordinator_id");
@@ -92,7 +104,6 @@ const Attendance: React.FC = () => {
     setShowMapModal(false);
     setMapCoords(null);
     setSelectedAddress(null);
-    setMessage("");
   };
 
   // Table columns with clickable location
@@ -175,10 +186,10 @@ const Attendance: React.FC = () => {
               center={mapCoords}
               zoom={15}
               style={{ height: "600px", width: "95%" }}
+              attributionControl={true}
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
               <Marker position={mapCoords}>
                 <Popup>{selectedAddress}</Popup>

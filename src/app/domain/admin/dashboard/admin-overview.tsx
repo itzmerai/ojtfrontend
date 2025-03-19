@@ -25,6 +25,7 @@ const Overview: React.FC = () => {
     {
       id: number;
       name: string;
+      registrationDate: string;
     }[]
   >([]);
   const [attendancePercentage, setAttendancePercentage] = useState<number>(0);
