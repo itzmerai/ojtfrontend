@@ -177,11 +177,11 @@ const Overview: React.FC = () => {
 
       <div className="chart-two">
       <div className="chart-container">
-  <h2>Program-wise Student Distribution</h2>
-  <div style={{ height: 250 }}>
-    <ProgramBarChart data={programDistribution} />
-  </div>
-</div>
+             <h2>Program-wise Student Distribution</h2>
+              <div style={{ height: 250 }}>
+                <ProgramBarChart data={programDistribution} />
+              </div>
+      </div>
         <div className="recent-coordinators">
           <h2>Recently Added Coordinators</h2>
           <div className="new-members-list">
