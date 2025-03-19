@@ -7,11 +7,10 @@ import {
   FaBriefcase,
   FaBuilding,
 } from "react-icons/fa";
-import { ResponsiveContainer } from "recharts";
 import Card from "../../../../shared/components/cards/card";
 import ProgressRingCard from "../../../../shared/components/charts/ring-chart";
-import LineChartCard from "../../../../shared/components/charts/line-chart";
 import NewCoordinatorCard from "../../../../shared/components/new-coordinator/new-coordinator";
+import ProgramBarChart from "../../../../shared/components/charts/pbar-chart";
 import config from "../../../../config";
 
 const Overview: React.FC = () => {
@@ -28,7 +27,10 @@ const Overview: React.FC = () => {
       registrationDate: string;
     }[]
   >([]);
-  const [attendancePercentage, setAttendancePercentage] = useState<number>(0);
+  const [attendancePercentage, setAttendancePercentage] = useState<number | null>(null);
+  const [programDistribution, setProgramDistribution] = useState<
+  Array<{ program: string; student_count: number }>
+>([]);
 
   useEffect(() => {
     const fetchTotalCoordinators = async () => {
@@ -91,12 +93,30 @@ const Overview: React.FC = () => {
         const response = await axios.get(
           `${config.API_BASE_URL}/attendance-percentage`
         );
-        setAttendancePercentage(response.data.percentage);
+        
+        // Add validation
+        if (response.data?.percentage !== undefined) {
+          setAttendancePercentage(Math.round(response.data.percentage));
+        } else {
+          console.error('Invalid percentage data:', response.data);
+          setAttendancePercentage(0);
+        }
       } catch (error) {
         console.error("Error fetching attendance percentage:", error);
+        setAttendancePercentage(0);  // Set to 0 instead of leaving null
       }
     };
-
+    const fetchProgramDistribution = async () => {
+      try {
+        const response = await axios.get(
+          `${config.API_BASE_URL}/programwise`
+        );
+        setProgramDistribution(response.data);
+      } catch (error) {
+        console.error("Error fetching program distribution:", error);
+      }
+    };
+    fetchProgramDistribution();
     fetchTotalCoordinators();
     fetchTotalStudents();
     fetchTotalPrograms();
@@ -139,8 +159,8 @@ const Overview: React.FC = () => {
             className="total-student"
           />
         </div>
-        <ProgressRingCard percentage={attendancePercentage} />
-        {/* <div className="recent-coordinators">
+        <ProgressRingCard percentage={attendancePercentage ?? 0} />
+                {/* <div className="recent-coordinators">
           <h2>Recently Added Coordinators</h2>
           <div className="new-members-list">
             {recentlyAddedCoordinators.slice(0, 5).map((coordinator) => (
@@ -156,12 +176,12 @@ const Overview: React.FC = () => {
       </div>
 
       <div className="chart-two">
-        <div className="chart-container">
-          <h2>Program-wise Student Distribution</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChartCard />
-          </ResponsiveContainer>
-        </div>
+      <div className="chart-container">
+  <h2>Program-wise Student Distribution</h2>
+  <div style={{ height: 250 }}>
+    <ProgramBarChart data={programDistribution} />
+  </div>
+</div>
         <div className="recent-coordinators">
           <h2>Recently Added Coordinators</h2>
           <div className="new-members-list">

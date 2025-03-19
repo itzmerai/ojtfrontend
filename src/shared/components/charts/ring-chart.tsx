@@ -3,10 +3,18 @@ import "./linering-chartcard.scss";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 interface ProgressRingCardProps {
-  percentage: number;
+  percentage: number | null;  // Allow null
 }
 
 const ProgressRingCard: React.FC<ProgressRingCardProps> = ({ percentage }) => {
+  if (percentage === null) {
+    return (
+      <div className="progress-ring-card loading">
+        <div className="loading-spinner"></div>
+        <p>Loading attendance...</p>
+      </div>
+    );
+  }
   const data = [
     { name: "Progress", value: percentage },
     { name: "Remaining", value: 100 - percentage },
