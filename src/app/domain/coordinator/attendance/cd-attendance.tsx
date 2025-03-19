@@ -26,6 +26,7 @@ const Attendance: React.FC = () => {
   const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [originalData, setOriginalData] = useState<AttendanceItem[]>([]);
 
   useEffect(() => {
     const storedCoordinatorId = localStorage.getItem("coordinator_id");
@@ -53,6 +54,7 @@ const Attendance: React.FC = () => {
 
           Promise.all(updatedDataPromises).then((updatedData) => {
             setAttendanceData(updatedData);
+            setOriginalData(updatedData); 
             setIsLoading(false);
           });
         })
@@ -158,7 +160,25 @@ const Attendance: React.FC = () => {
       ),
     },
   ];
-
+  
+  const handleSearch = (query: string) => {
+    if (!query) {
+      setAttendanceData(originalData);
+      return;
+    }
+  
+    const lowerQuery = query.toLowerCase();
+    const filtered = originalData.filter((item) => {
+      return (
+        (item.student_name?.toLowerCase() || "").includes(lowerQuery) ||
+        (item.company_name?.toLowerCase() || "").includes(lowerQuery) ||
+        (item.date?.toLowerCase() || "").includes(lowerQuery) ||
+        (item.address?.toLowerCase() || "").includes(lowerQuery)
+      );
+    });
+  
+    setAttendanceData(filtered);
+  };
   return (
     <div className="dashboard-page">
       <h1 className="page-title">Attendance</h1>
@@ -167,10 +187,10 @@ const Attendance: React.FC = () => {
       {/* SearchBar */}
       <div className="controls-container">
         <div className="search-bar-container">
-          <SearchBar
-            placeholder="Search"
-            onSearch={(query) => console.log(query)}
-          />
+        <SearchBar
+          placeholder="Search "
+          onSearch={handleSearch}
+        />;
         </div>
       </div>
 
