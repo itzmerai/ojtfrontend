@@ -1,34 +1,45 @@
-// BarChartCard.tsx
 import React from "react";
-import "./bar-chart.scss"; // Keep the styles for the bar chart
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, registerables } from "chart.js";
+import "./bar-chart.scss";
 
-// Sample data for the bar chart
-const data = [
-  { program: "Marvs Digital", students: 10 },
-  { program: "Skyride", students: 8 },
-  { program: "BISU", students: 5 },
-];
+ChartJS.register(...registerables);
 
-const BarChartCard: React.FC = () => {
+interface BarChartCardProps {
+  data: Array<{ x: string; y: number }>;
+}
+
+const BarChartCard: React.FC<BarChartCardProps> = ({ data }) => {
+  const chartData = {
+    labels: data.map((item) => item.x),
+    datasets: [
+      {
+        label: "Number of Students",
+        data: data.map((item) => item.y),
+        backgroundColor: "rgba(248, 49, 9, 0.5)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+  };
+
   return (
-    <ResponsiveContainer width="100%" height={260}>
-      <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="program" />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey="students" fill="rgb(184, 84, 84)" barSize={90} />
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="bar-chart-container">
+      <Bar data={chartData} options={options} />
+    </div>
   );
 };
 

@@ -19,6 +19,10 @@ const CoordinatorDashboard: React.FC = () => {
       companyName: string;
     }[]
   >([]);
+  const [companyDistribution, setCompanyDistribution] = useState<
+  { company: string; count: number }[]
+>([]);
+
 
   useEffect(() => {
     const storedCoordinatorId = localStorage.getItem("coordinator_id");
@@ -72,10 +76,21 @@ const CoordinatorDashboard: React.FC = () => {
         console.error("Error fetching recently added students:", error);
       }
     };
+    const fetchCompanyDistribution = async () => {
+      try {
+        const response = await axios.get(
+          `${config.API_BASE_URL}/api/company-distribution?coordinator_id=${coordinatorId}`
+        );
+        setCompanyDistribution(response.data);
+      } catch (error) {
+        console.error("Error fetching company distribution:", error);
+      }
+    };
 
     fetchTotalCompanies();
     fetchTotalStudents();
     fetchRecentlyAddedStudents();
+    fetchCompanyDistribution();
   }, [coordinatorId]);
 
   useEffect(() => {
@@ -94,7 +109,10 @@ const CoordinatorDashboard: React.FC = () => {
 
     fetchCoordinatorName();
   }, [coordinatorId]);
-
+  const chartData = companyDistribution.map(({ company, count }) => ({
+    x: company,
+    y: count,
+  }));
   return (
     <div className="dashb">
       <div className="cards-wrapper">
@@ -158,7 +176,7 @@ const CoordinatorDashboard: React.FC = () => {
 
         <div className="chart-container">
           <h2>Student Company Distribution</h2>
-          <BarChartCard />
+          <BarChartCard data={chartData} />       
         </div>
       </div>
     </div>
