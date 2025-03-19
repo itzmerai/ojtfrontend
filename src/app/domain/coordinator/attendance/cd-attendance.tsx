@@ -25,10 +25,12 @@ const Attendance: React.FC = () => {
   const [showMapModal, setShowMapModal] = useState(false);
   const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedCoordinatorId = localStorage.getItem("coordinator_id");
     if (storedCoordinatorId) {
+      setIsLoading(true); 
       fetch(
         `${config.API_BASE_URL}/api/timesheet?coordinator_id=${storedCoordinatorId}`
       )
@@ -51,11 +53,13 @@ const Attendance: React.FC = () => {
 
           Promise.all(updatedDataPromises).then((updatedData) => {
             setAttendanceData(updatedData);
+            setIsLoading(false);
           });
         })
         .catch((error) => {
           console.error("Error fetching attendance data:", error);
           alert("Error fetching attendance data. Please try again later.");
+          setIsLoading(false);
         });
     } else {
       alert("Coordinator ID not found. Please log in again.");
@@ -108,7 +112,6 @@ const Attendance: React.FC = () => {
 
   // Table columns with clickable location
   const columns = [
-    { header: "#", key: "time_id" },
     { header: "Date", key: "date" },
     { header: "Student Name", key: "student_name" },
     { header: "Company", key: "company_name" },
@@ -172,7 +175,14 @@ const Attendance: React.FC = () => {
       </div>
 
       {/* Render the DataTable */}
-      <DataTable columns={columns} data={attendanceData} />
+      {isLoading ? (
+  <div className="loading-spinner">
+    <div className="spinner"></div>
+    <p className="loading-text">Loading</p>
+  </div>
+) : (
+  <DataTable columns={columns} data={attendanceData} />
+)}
 
       {/* Modal to display Leaflet map */}
       {showMapModal && mapCoords && (
@@ -202,6 +212,81 @@ const Attendance: React.FC = () => {
       {/* Embedded CSS for Modal */}
       <style>
         {`
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(52, 152, 219, 0) 0%,
+    #3498db 25%,
+    #2ecc71 50%,
+    #3498db 75%,
+    rgba(52, 152, 219, 0) 100%
+  );
+  mask: radial-gradient(farthest-side, rgba(0,0,0,0) 65%, #000 66%);
+  -webkit-mask: radial-gradient(farthest-side, rgba(0,0,0,0) 65%, #000 66%);
+  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite, 
+             pulse 2s ease-in-out infinite;
+  position: relative;
+}
+
+.spinner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, #3498db 0%, #2ecc71 100%);
+  border-radius: 50%;
+  mask: inherit;
+  -webkit-mask: inherit;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.loading-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  position: relative;
+}
+
+.loading-text::after {
+  content: '...';
+  position: absolute;
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+            
           .modal {
             display: block;
             position: fixed;
@@ -247,6 +332,7 @@ const Attendance: React.FC = () => {
           }
         `}
       </style>
+      
     </div>
   );
 };
