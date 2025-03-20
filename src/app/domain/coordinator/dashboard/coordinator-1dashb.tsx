@@ -3,41 +3,54 @@ import "./coordinator-dashboard.scss";
 import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../../../../shared/components/sidebar/coordinator-sidebar";
+import maleImage from "../../../../shared/assets/male.png";
+import femaleImage from "../../../../shared/assets/female.png";
+import config from "../../../../config"; // Ensure config is properly imported
 
 const CDashboard: React.FC = () => {
   const [activeItem, setActiveItem] = useState<string>("overview");
-  const [adminData, setAdminData] = useState<any>(null); // State to hold admin data
+  const [coordinatorDetails, setCoordinatorDetails] = useState<any>(null);
+  const [profileImage, setProfileImage] = useState<string>(maleImage);
+  const [coordinatorId, setCoordinatorId] = useState<string>("");
   const navigate = useNavigate();
 
+  // Get coordinator ID from localStorage
   useEffect(() => {
-    const fetchAdminData = async () => {
+    const storedCoordinatorId = localStorage.getItem("coordinator_id");
+    if (storedCoordinatorId) {
+      setCoordinatorId(storedCoordinatorId);
+    } else {
+      alert("Coordinator ID not found. Please log in again.");
+      window.location.href = "/login";
+    }
+  }, []);
+
+  // Fetch coordinator data when coordinatorId is available
+  useEffect(() => {
+    const fetchCoordinatorData = async () => {
+      if (!coordinatorId) return;
+
       try {
-        const response = await axios.get("http://localhost:3001/admin");
-        const admins = response.data;
-
-        // Retrieve the current user's UUID from localStorage
-        const storedUserDisplayData = JSON.parse(
-          localStorage.getItem("userDisplayData") || "{}"
-        );
-        const loggedInAdminUUID = storedUserDisplayData.uuid;
-
-        // Find the admin with the matching UUID
-        const loggedInAdmin = admins.find(
-          (admin: any) => admin.adminUUID === loggedInAdminUUID
+        const response = await axios.get(
+          `${config.API_BASE_URL}/api/coordinatorwc?coordinator_id=${coordinatorId}`
         );
 
-        if (loggedInAdmin) {
-          setAdminData(loggedInAdmin);
-        } else {
-          console.error("Logged-in admin not found");
+        if (response.data) {
+          setCoordinatorDetails(response.data);
+          
+          // Set profile image based on gender from API response
+          setProfileImage(
+            response.data.gender === "Female" ? femaleImage : maleImage
+          );
         }
       } catch (error) {
-        console.error("Error fetching admin data:", error);
+        console.error("Error fetching coordinator data:", error);
+        alert("Error loading coordinator details");
       }
     };
 
-    fetchAdminData();
-  }, []);
+    fetchCoordinatorData();
+  }, [coordinatorId]);
 
   const handleItemClick = (item: string) => {
     setActiveItem(item);
@@ -48,20 +61,35 @@ const CDashboard: React.FC = () => {
     <div className="dashboard">
       <Sidebar activeItem={activeItem} onItemClick={handleItemClick} />
       <div className="dashboard-container">
-        <div className="dashboard-header">
-          {adminData && (
-            <div className="admin-info">
-              <span className="admin-name">
-                {`${adminData.firstName} ${
-                  adminData.middleName
-                    ? `${adminData.middleName.charAt(0)}. `
-                    : ""
-                } ${adminData.lastName}`}
-              </span>
-            </div>
-          )}
-        </div>
-        <Outlet context={{ adminData }} />
+      <div className="profile-picture-container">
+  <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+    <span
+      style={{
+        fontFamily: '"Montserrat", sans-serif',
+        color: "grey",
+        fontWeight: 600,
+        fontSize: "18px",
+        paddingTop: "2em",
+      }}
+    >
+      {/* Display coordinator's first name or default text */}
+    Coordinator  {coordinatorDetails?.fullName?.split(' ')[0] || 'Coordinator'}
+    </span>
+    <img
+      src={profileImage}
+      alt="Coordinator Profile"
+      style={{
+        width: "70px",
+        height: "70px",
+        borderRadius: "50%",
+        objectFit: "cover",
+        position: "relative",
+        top: "1em",
+      }}
+    />
+  </div>
+</div>
+        <Outlet context={{ coordinatorDetails }} />
       </div>
     </div>
   );

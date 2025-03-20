@@ -11,33 +11,51 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
+
+    .profile-picture-container {
+      display: flex;
+      justify-content: right;
+      margin-bottom: 15px; // Optional margin
+    }
+
+    .admin-text {
+      font-family: "Montserrat", sans-serif; // Apply Montserrat font
+      color: grey; // Grey text color
+      font-weight: 600;
+      font-size: 18px; // Adjust font size as needed
+      padding-top: 2.5em;
+      margin-right: 40px; // Space between text and profile icon
+    }
+
+    .profile-picture {
+      position: relative; // Fix the position of the profile icon
+      top: 1em; // Adjust the distance from the top
+      right: 2.5em; // Adjust the distance from the right
+      z-index: 1000; // Ensure it stays above other content
+      width: 80px; // Ensure width and height are equal
+      height: 80px; // Ensure width and height are equal
+      border-radius: 50%; // Makes the image circular
+      object-fit: cover; // Ensures image is scaled properly
+    }
   }
 
   .dashboard-header {
     display: flex;
-    justify-content: space-between; /* Aligns items horizontally with space between */
+    justify-content: flex-end; /* Align items to the right */
     align-items: center; /* Vertically centers items */
     padding: 4em 3em 1em 3em;
-    margin-bottom: 1em;
+    margin-bottom: 0em;
 
     .admin-info {
       display: flex;
       align-items: center;
 
-      .admin-profile {
+      .logo {
         width: 50px; /* Adjust size as needed */
         height: 50px;
-        border-radius: 50%;
-        object-fit: cover; /* Ensure image fits well within the circle */
+        border-radius: 50%; /* Makes the image circular */
+        object-fit: cover; /* Ensures the image fits well within the circle */
         margin-left: 15px; /* Space between profile picture and name */
-      }
-
-      .admin-name {
-        font-family: "Montserrat", sans-serif;
-        font-size: 0.938em; /* 15px */
-        color: #333;
-        margin-left: 0.625em; /* 10px */
-        white-space: nowrap; /* Prevents text from wrapping to the next line */
       }
     }
   }

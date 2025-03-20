@@ -3,7 +3,7 @@ import "./admin-dashboard.scss";
 import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../../../../shared/components/sidebar/admin-sidebar";
-import config from "../../../../config";
+import adminProfImage from "../../../../shared/assets/admin-profile.png";
 
 const Dashboard: React.FC = () => {
   const [activeItem, setActiveItem] = useState<string>("overview");
@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get(`${config.API_BASE_URL}/admin`);
+        const response = await axios.get("http://localhost:3001/admin");
         const admins = response.data;
 
         // Retrieve the current user's UUID from localStorage
@@ -49,19 +49,11 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <Sidebar activeItem={activeItem} onItemClick={handleItemClick} />
       <div className="dashboard-container">
-        <div className="dashboard-header">
-          {adminData && (
-            <div className="admin-info">
-              <span className="admin-name">
-                {`${adminData.firstName} ${
-                  adminData.middleName
-                    ? `${adminData.middleName.charAt(0)}. `
-                    : ""
-                } ${adminData.lastName}`}
-              </span>
-            </div>
-          )}
+        <div className="profile-picture-container">
+          <span className="admin-text">Administrator</span>
+          <img src={adminProfImage} alt="" className="profile-picture" />
         </div>
+
         <Outlet context={{ adminData }} />
       </div>
     </div>
