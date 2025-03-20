@@ -1,34 +1,68 @@
-import React from "react";
-import DataTable from "../../../../shared/components/table/data-table"; // Adjust the import path as necessary
+import React, { useEffect, useState } from "react";
+import DataTable from "../../../../shared/components/table/data-table";
+import axios from "axios";
+import config from "../../../../config";
 
 const SubmittedFiles: React.FC = () => {
-  const submittedFilesData = [
-    {
-      id: 1,
-      date: "2024-01-01",
-      student: "John Doe",
-      uploadedFiles: "file1.pdf, file2.docx",
-    },
-    {
-      id: 2,
-      date: "2024-01-02",
-      student: "Jane Smith",
-      uploadedFiles: "file3.pdf",
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [, setCoordinatorId] = useState("");
+
+  useEffect(() => {
+    const storedCoordinatorId = localStorage.getItem("coordinator_id");
+    if (storedCoordinatorId) {
+      setCoordinatorId(storedCoordinatorId);
+      fetchStudents(storedCoordinatorId);
+    } else {
+      alert("Coordinator ID not found. Please log in again.");
+      window.location.href = "/login";
+    }
+  }, []);
+
+  const fetchStudents = async (coordinatorId: string) => {
+    try {
+      const response = await axios.get(
+        `${config.API_BASE_URL}/students-with-uploads`,
+        { params: { coordinatorId } }
+      );
+      setStudents(response.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+      alert("Error loading student data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewUploads = (studentId: string) => {
+    window.open(`/student-documents/${studentId}`, "_blank");
+  };
+
+  const columns = [
+    { header: "#", key: "student_id" },
+    { header: "Student Name", key: "student_name" },
+    { 
+      header: "Uploads", 
+      key: "upload_count",
+      render: (row: any) => (
+        <button 
+          onClick={() => handleViewUploads(row.student_id)}
+          className="text-blue-500 hover:underline"
+        >
+          View Uploads ({row.upload_count})
+        </button>
+      )
     },
   ];
 
-  const columns = [
-    { header: "#", key: "id" },
-    { header: "Student", key: "student" },
-    { header: "Uploaded Files", key: "uploadedFiles" },
-  ];
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="submitted-files-container">
-      {submittedFilesData.length === 0 ? (
+      {students.length === 0 ? (
         <p>No files submitted yet.</p>
       ) : (
-        <DataTable columns={columns} data={submittedFilesData} />
+        <DataTable columns={columns} data={students} />
       )}
     </div>
   );

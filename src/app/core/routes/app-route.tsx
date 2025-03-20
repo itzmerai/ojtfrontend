@@ -12,13 +12,17 @@ import CoordinatorStudent from "../../domain/coordinator/students/cd-student";
 import CoordinatorCompany from "../../domain/coordinator/company/cd-company";
 import CoordinatorReport from "../../domain/coordinator/report/cd-report";
 import CoordinatorAnnouncement from "../../domain/coordinator/announcement/cd-announcement";
-
+import StudentDocuments from "../../../shared/components/buttons/report/StudentDocuments";
 export function AppRoute() {
 
   const router = createBrowserRouter([
     {
       path: "/",
       element: <LoginForm />,
+    },
+    {
+      path: "/student-documents/:studentId",
+      element: <StudentDocuments />,
     },
     {
       path: "/dashboard",
