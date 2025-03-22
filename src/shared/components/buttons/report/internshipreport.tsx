@@ -88,6 +88,7 @@ const InternshipReport: React.FC = () => {
       <div className="content-wrapper">
         <DataTable columns={columns} data={attendanceData} />
 
+        {/*}
         <div className="time-info">
           <p>Total Rendered Time:</p>
           <p>Required Duration:</p>
@@ -100,6 +101,7 @@ const InternshipReport: React.FC = () => {
             />
           </div>
         </div>
+        */}
       </div>
     </div>
   );

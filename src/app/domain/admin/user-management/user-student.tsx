@@ -1,9 +1,9 @@
-// File: src/pages/UserStudent.tsx
 import React, { useEffect, useState } from "react";
 import "./user-student.scss";
-import SearchBar from "../../../../shared/components/searchbar/searchbar"; // Adjust the path as needed
+import SearchBar from "../../../../shared/components/searchbar/searchbar";
 import DataTable from "../../../../shared/components/table/data-table";
 import config from "../../../../config";
+
 const Student: React.FC = () => {
   interface Student {
     student_schoolid: string;
@@ -16,7 +16,26 @@ const Student: React.FC = () => {
   const [data, setData] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  
+  const [programFilter, setProgramFilter] = useState<string>("all");
+  const [programOptions, setProgramOptions] = useState<Array<{ value: string; label: string }>>([]);
+
+  // Generate program options from data
+  useEffect(() => {
+    if (data.length > 0) {
+      const uniquePrograms = Array.from(new Set(data.map(student => student.program_name)))
+        .sort()
+        .map(program => ({
+          value: program,
+          label: program
+        }));
+
+      setProgramOptions([
+        { value: "all", label: "All Programs" },
+        ...uniquePrograms
+      ]);
+    }
+  }, [data]);
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
@@ -51,12 +70,17 @@ const Student: React.FC = () => {
   }, []);
 
   const filteredStudents = data.filter((student) => {
-    return (
+    const matchesSearch = (
       student.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.program_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.coordinator_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.student_schoolid.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const matchesProgram = programFilter === "all" || 
+      student.program_name === programFilter;
+
+    return matchesSearch && matchesProgram;
   });
   
   return (
@@ -64,14 +88,17 @@ const Student: React.FC = () => {
       <h1 className="page-title">User Management</h1>
       <h2 className="page-subtitle">Student Records</h2>
 
-      {/* Add the SearchBar, Dropdown, and PrimaryButton side by side */}
       <div className="controls-container">
         <div className="search-bar-container">
-        <SearchBar placeholder="Search" onSearch={handleSearch} />
+          <SearchBar 
+            placeholder="Search" 
+            onSearch={handleSearch}
+            filterOptions={programOptions}
+            onFilter={setProgramFilter}
+          />
         </div>
       </div>
 
-      {/* Render the DataTable below the controls */}
       {loading ? (
         <p>Loading...</p>
       ) : (

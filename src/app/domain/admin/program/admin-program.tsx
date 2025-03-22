@@ -23,7 +23,8 @@ const Program: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [editingProgram, setEditingProgram] = useState<any | null>(null);
-
+  const [durationFilter, setDurationFilter] = useState<string>("all");
+  const [dynamicFilterOptions, setDynamicFilterOptions] = useState<Array<{ value: string; label: string }>>([]);
   // Fetch programs from the server
   const fetchPrograms = useCallback(async () => {
     try {
@@ -263,12 +264,58 @@ const confirmUpdateProgram = async () => {
     },
   ];
 
-  const filteredPrograms = programs.filter((program) => {
-    return (
-      (program.program_name?.toLowerCase().includes(searchQuery.toLowerCase()) || "") ||
-      (program.program_description?.toLowerCase().includes(searchQuery.toLowerCase()) || "") ||
-      (program.program_hours?.toString().toLowerCase().includes(searchQuery.toLowerCase()) || "")
+  useEffect(() => {
+    if (programs.length === 0) return;
+
+    const validHours = programs
+      .map(p => parseInt(p.program_hours))
+      .filter(h => !isNaN(h) && h >= 0);
+
+    if (validHours.length === 0) {
+      setDynamicFilterOptions([{ value: "all", label: "All Durations" }]);
+      return;
+    }
+
+    const minHour = Math.min(...validHours);
+    const maxHour = Math.max(...validHours);
+
+    // Calculate ranges in increments of 100
+    const ranges = [];
+    let current = Math.floor(minHour / 100) * 100;
+    const end = Math.ceil(maxHour / 100) * 100;
+
+    while (current < end) {
+      const next = current + 100;
+      ranges.push({
+        value: `${current}-${next}`,
+        label: `${current}-${next} hours`
+      });
+      current = next;
+    }
+
+    setDynamicFilterOptions([
+      { value: "all", label: "All Durations" },
+      ...ranges
+    ]);
+  }, [programs]);
+
+  // Filtering logic
+  const filteredPrograms = programs.filter(program => {
+    const matchesSearch = (
+      program.program_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      program.program_description?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      program.program_hours?.toString().includes(searchQuery)
     );
+
+    const matchesDuration = () => {
+      if (durationFilter === "all") return true;
+      
+      const [min, max] = durationFilter.split("-").map(Number);
+      const programHours = Number(program.program_hours);
+      return programHours >= min && programHours <= max;
+    };
+
+    return matchesSearch && matchesDuration();
   });
 
   return (
@@ -278,7 +325,12 @@ const confirmUpdateProgram = async () => {
 
       <div className="controls-container">
         <div className="search-bar-container">
-          <SearchBar placeholder="Search" onSearch={setSearchQuery} />
+        <SearchBar 
+            placeholder="Search programs..."
+            onSearch={setSearchQuery}
+            filterOptions={dynamicFilterOptions}
+            onFilter={setDurationFilter}
+          />
         </div>
 
         <div className="add-button-container">

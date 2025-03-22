@@ -239,8 +239,6 @@ const Attendance: React.FC = () => {
   justify-content: center;
   min-height: 200px;
   gap: 1.5rem;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);

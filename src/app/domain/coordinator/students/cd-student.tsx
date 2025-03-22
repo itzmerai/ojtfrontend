@@ -41,7 +41,8 @@ const CoordinatorStudent = () => {
   const [email, setEmail] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<any>(null); // New state for selected student
-
+  const [companyFilter, setCompanyFilter] = useState<string>("all");
+  const [companyFilterOptions, setCompanyFilterOptions] = useState<Array<{ value: string; label: string }>>([]);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   useEffect(() => {
@@ -85,17 +86,38 @@ const CoordinatorStudent = () => {
   }, [coordinatorId]);
 
   useEffect(() => {
-    if (searchQuery) {
-      const filteredData = studentData.filter((student: any) =>
+    if (studentData.length > 0) {
+      const uniqueCompanies = Array.from(
+        new Set(studentData.map((student: any) => student.company_name))
+        )
+        .filter(Boolean) // Remove any undefined/null values
+        .map((company) => ({
+          value: company,
+          label: company,
+        }));
+
+      setCompanyFilterOptions([
+        { value: "all", label: "All Companies" },
+        ...uniqueCompanies,
+      ]);
+    }
+  }, [studentData]);
+
+  useEffect(() => {
+    const filteredData = studentData.filter((student: any) => {
+      const matchesSearch = (
         student.student_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.student_schoolid.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.student_email.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredStudentData(filteredData);
-    } else {
-      setFilteredStudentData(studentData);
-    }
-  }, [searchQuery, studentData]);
+
+      const matchesCompany = companyFilter === "all" || 
+        student.company_name === companyFilter;
+
+      return matchesSearch && matchesCompany;
+    });
+    setFilteredStudentData(filteredData);
+  }, [searchQuery, companyFilter, studentData]);
 
   const handleAddButtonClick = () => {
     setSelectedStudent(null); // Reset selected student when adding a new one
@@ -308,9 +330,11 @@ const CoordinatorStudent = () => {
 
       <div className="controls-container">
         <div className="search-bar-container">
-          <SearchBar
+        <SearchBar
             placeholder="Search"
             onSearch={(query) => setSearchQuery(query)}
+            filterOptions={companyFilterOptions}
+            onFilter={setCompanyFilter}
           />
         </div>
         <div className="add-button-container">
@@ -380,7 +404,7 @@ const CoordinatorStudent = () => {
                 <div className="sex-dropdown">
                   <label htmlFor="sex">Sex</label>
                   <Dropdown
-                    options={["Male", "Female", "Other"]}
+                    options={["Male", "Female"]}
                     value={sex}
                     onChange={(value) => setSex(value)}
                   />

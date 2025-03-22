@@ -41,7 +41,13 @@ const Coordinator: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false); // New state to check edit mode
   const [currentCoordinatorId, setCurrentCoordinatorId] = useState<
     number | null
-  >(null); // To store the coordinator ID
+  >(null);
+  const [genderFilter, setGenderFilter] = useState<string>("all");
+  const genderFilterOptions = [
+    { value: "all", label: "All Genders" },
+    { value: "Male", label: "Male" },
+    { value: "Female", label: "Female" }
+  ]; // To store the coordinator ID
 
   // Fetch coordinator data from the database
   useEffect(() => {
@@ -92,7 +98,7 @@ const Coordinator: React.FC = () => {
   };
 
   const filteredCoordinators = coordinators.filter((coordinator) => {
-    return (
+    const matchesSearch = (
       coordinator.coordinator_firstname
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
@@ -106,6 +112,11 @@ const Coordinator: React.FC = () => {
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
     );
+  
+    const matchesGender = genderFilter === "all" || 
+      coordinator.coordinator_sex?.toLowerCase() === genderFilter.toLowerCase();
+  
+    return matchesSearch && matchesGender;
   });
 
   const handleAddButtonClick = () => {
@@ -370,7 +381,12 @@ const handleModalSave = async () => {
 
       <div className="controls-container">
         <div className="search-bar-container">
-          <SearchBar placeholder="Search" onSearch={handleSearch} />
+            <SearchBar 
+              placeholder="Search"
+              onSearch={handleSearch}
+              filterOptions={genderFilterOptions}
+              onFilter={setGenderFilter}
+            />
         </div>
 
         <div className="add-button-container">

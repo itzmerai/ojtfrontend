@@ -1,5 +1,4 @@
-// CoordinatorAnnouncement.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import AnnouncementCard from "../../../../shared/components/cards/announcemet-card";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +8,7 @@ import Modal from "../../../../shared/components/modals/modal";
 import Dropdown from "../../../../shared/components/dropdowns/dropdown";
 import NameInputField from "../../../../shared/components/fields/unif";
 import config from "../../../../config";
+
 interface Announcement {
   title: string;
   content: string;
@@ -24,6 +24,19 @@ const CoordinatorAnnouncement: React.FC = () => {
     type: "",
   });
   const [coordinatorId, setCoordinatorId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtered announcements based on search query
+  const filteredAnnouncements = useMemo(() => {
+    const lowerQuery = searchQuery.toLowerCase();
+    return announcements.filter(announcement => {
+      return (
+        announcement.title.toLowerCase().includes(lowerQuery) ||
+        announcement.content.toLowerCase().includes(lowerQuery) ||
+        announcement.datePosted.toLowerCase().includes(lowerQuery)
+      );
+    });
+  }, [announcements, searchQuery]);
 
   useEffect(() => {
     const storedCoordinatorId = localStorage.getItem("coordinator_id");
@@ -54,7 +67,6 @@ const CoordinatorAnnouncement: React.FC = () => {
       console.error("Failed to fetch announcements:", error);
     }
   };
-  
 
   const handleAddAnnouncementClick = () => setShowModal(true);
 
@@ -72,7 +84,7 @@ const CoordinatorAnnouncement: React.FC = () => {
     };
 
     try {
-      await fetch(`${config.API_BASE_URL}api/announcements`, {
+      await fetch(`${config.API_BASE_URL}/api/announcements`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newAnnouncementData),
@@ -96,17 +108,29 @@ const CoordinatorAnnouncement: React.FC = () => {
       <h2 className="page-subtitle">Manage Announcements</h2>
       <div className="controls-container">
         <div className="search-bar-container">
-          <SearchBar placeholder="Search" onSearch={(query) => console.log(query)} />
+          <SearchBar 
+            placeholder="Search" 
+            onSearch={(query) => setSearchQuery(query)} 
+          />
         </div>
         <div className="add-button-container">
-          <PrimaryButton buttonText="Add Announcement" handleButtonClick={handleAddAnnouncementClick} icon={<FontAwesomeIcon icon={faPlus} />} />
+          <PrimaryButton 
+            buttonText="Add Announcement" 
+            handleButtonClick={handleAddAnnouncementClick} 
+            icon={<FontAwesomeIcon icon={faPlus} />} 
+          />
         </div>
       </div>
       <div className="announcement-container">
         <div className="announcement-cards-wrapper">
           <div className="announcement-cards-container">
-            {announcements.map((announcement, index) => (
-              <AnnouncementCard key={index} title={announcement.title} content={announcement.content} datePosted={announcement.datePosted} />
+            {filteredAnnouncements.map((announcement, index) => (
+              <AnnouncementCard 
+                key={index} 
+                title={announcement.title} 
+                content={announcement.content} 
+                datePosted={announcement.datePosted} 
+              />
             ))}
           </div>
         </div>
