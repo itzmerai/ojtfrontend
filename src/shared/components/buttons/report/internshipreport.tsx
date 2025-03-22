@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./internshipreport.scss";
 import DataTable from "../../../../shared/components/table/data-table";
 import SearchBar from "../../searchbar/searchbar";
+{/*}
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import PrimaryButton from "../primero-button";
+*/}
 import config from "../../../../config";
 const InternshipReport: React.FC = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -72,9 +74,9 @@ const InternshipReport: React.FC = () => {
     { header: "Location", key: "location" },
   ];
 
-  const handlePrintButtonClick = () => {
+  {/*const handlePrintButtonClick = () => {
     window.print(); // Trigger the print dialog
-  };
+  };*/}
 
   return (
     <div className="internship-report-container">
