@@ -10,6 +10,7 @@ const Student: React.FC = () => {
     coordinator_name: string;
     program_name: string;
     company_name: string;
+    student_status: string;
     program_hours: number;
   }
 
@@ -47,6 +48,7 @@ const Student: React.FC = () => {
     { header: "Program", key: "program_name" },
     { header: "Company", key: "company_name" },
     { header: "Required Duration", key: "program_hours" },
+    { header: "Status", key: "student_status" },
   ];
 
   // Fetch data from the API
