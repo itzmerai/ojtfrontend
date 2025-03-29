@@ -11,12 +11,12 @@ import Card from "../../../../shared/components/cards/card";
 import ProgressRingCard from "../../../../shared/components/charts/ring-chart";
 import NewCoordinatorCard from "../../../../shared/components/new-coordinator/new-coordinator";
 import ProgramBarChart from "../../../../shared/components/charts/pbar-chart";
-import config from "../../../../config";
 
 const Overview: React.FC = () => {
   const [totalCoordinators, setTotalCoordinators] = useState<number | null>(
     null
   );
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [totalStudents, setTotalStudents] = useState<number | null>(null);
   const [totalPrograms, setTotalPrograms] = useState<number | null>(null);
   const [totalCompanies, setTotalCompanies] = useState<number | null>(null);
@@ -36,7 +36,7 @@ const Overview: React.FC = () => {
     const fetchTotalCoordinators = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/count-coordinators`
+          `${API_BASE_URL}/api/count-coordinators`
         );
         setTotalCoordinators(response.data.count); // Set the count of coordinators
       } catch (error) {
@@ -47,7 +47,7 @@ const Overview: React.FC = () => {
     const fetchTotalStudents = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/countall-students`
+          `${API_BASE_URL}/countall-students`
         );
         setTotalStudents(response.data.count);
       } catch (error) {
@@ -58,7 +58,7 @@ const Overview: React.FC = () => {
     const fetchTotalPrograms = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/count-programs`
+          `${API_BASE_URL}/api/count-programs`
         ); // Adjust the port to match your backend port
         setTotalPrograms(response.data.count); // Set the count in your state
       } catch (error) {
@@ -69,7 +69,7 @@ const Overview: React.FC = () => {
     const fetchTotalCompanies = async () => {
       try {
         const response = await axios.get(
-         `${config.API_BASE_URL}/countall-companies`
+         `${API_BASE_URL}/countall-companies`
         );
         setTotalCompanies(response.data.count);
       } catch (error) {
@@ -80,7 +80,7 @@ const Overview: React.FC = () => {
     const fetchRecentlyAddedCoordinators = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/recent-coordinators`
+          `${API_BASE_URL}/api/recent-coordinators`
         );
         setRecentlyAddedCoordinators(response.data.recentCoordinators);
       } catch (error) {
@@ -91,7 +91,7 @@ const Overview: React.FC = () => {
     const fetchAttendancePercentage = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/attendance-percentage`
+          `${API_BASE_URL}/attendance-percentage`
         );
         
         // Add validation
@@ -109,7 +109,7 @@ const Overview: React.FC = () => {
     const fetchProgramDistribution = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/programwise`
+          `${API_BASE_URL}/programwise`
         );
         setProgramDistribution(response.data);
       } catch (error) {

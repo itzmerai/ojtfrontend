@@ -5,12 +5,12 @@ import { FaBuilding, FaGraduationCap } from "react-icons/fa";
 import Card from "../../../../shared/components/cards/card";
 import BarChartCard from "../../../../shared/components/charts/bar-chart";
 import welcomeGif from "../../../../shared/assets/welcome.gif";
-import config from "../../../../config";
 const CoordinatorDashboard: React.FC = () => {
   const [coordinatorId, setCoordinatorId] = useState<string | null>(null);
   const [totalCompanies, setTotalCompanies] = useState<number | null>(null);
   const [coordinatorName, setCoordinatorName] = useState<string>("");
   const [totalStudents, setTotalStudents] = useState<number | null>(null);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [recentlyAddedStudents, setRecentlyAddedStudents] = useState<
     {
       id: number;
@@ -40,7 +40,7 @@ const CoordinatorDashboard: React.FC = () => {
     const fetchTotalCompanies = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/count-companies?coordinator_id=${coordinatorId}`
+          `${API_BASE_URL}/api/count-companies?coordinator_id=${coordinatorId}`
         );
         setTotalCompanies(response.data.count);
       } catch (error) {
@@ -51,7 +51,7 @@ const CoordinatorDashboard: React.FC = () => {
     const fetchTotalStudents = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/count-students?coordinator_id=${coordinatorId}`
+          `${API_BASE_URL}/api/count-students?coordinator_id=${coordinatorId}`
         );
         setTotalStudents(response.data.count);
       } catch (error) {
@@ -62,7 +62,7 @@ const CoordinatorDashboard: React.FC = () => {
     const fetchRecentlyAddedStudents = async () => {
       try {
         const response = await axios.get(
-         `${config.API_BASE_URL}/api/recent-students?coordinator_id=${coordinatorId}`
+         `${API_BASE_URL}/api/recent-students?coordinator_id=${coordinatorId}`
         );
         setRecentlyAddedStudents(
           response.data.recentStudents.map((student: any) => ({
@@ -79,7 +79,7 @@ const CoordinatorDashboard: React.FC = () => {
     const fetchCompanyDistribution = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/company-distribution?coordinator_id=${coordinatorId}`
+          `${API_BASE_URL}/api/company-distribution?coordinator_id=${coordinatorId}`
         );
         setCompanyDistribution(response.data);
       } catch (error) {
@@ -99,7 +99,7 @@ const CoordinatorDashboard: React.FC = () => {
     const fetchCoordinatorName = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/coordinatorwc?coordinator_id=${coordinatorId}`
+          `${API_BASE_URL}/api/coordinatorwc?coordinator_id=${coordinatorId}`
         );
         setCoordinatorName(response.data.fullName);
       } catch (error) {

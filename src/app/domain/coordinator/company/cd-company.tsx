@@ -8,7 +8,6 @@ import PrimaryButton from "../../../../shared/components/buttons/primero-button"
 import Modal from "../../../../shared/components/modals/modal";
 import NameInputField from "../../../../shared/components/fields/unif";
 import axios from "axios";
-import config from "../../../../config";
 
 const CoordinatorCompany = () => {
     interface Company {
@@ -19,7 +18,7 @@ const CoordinatorCompany = () => {
         mentorName: string;
         contactNo: string;
     }
-
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
     const [companyData, setCompanyData] = useState<Company[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [currentModal, setCurrentModal] = useState<string | null>(null);
@@ -44,7 +43,7 @@ const CoordinatorCompany = () => {
         if (!coordinatorId) return;
 
         try {
-            const response = await axios.get(`${config.API_BASE_URL}/api/companiesni`, {
+            const response = await axios.get(`${API_BASE_URL}/api/companiesni`, {
                 params: { coordinator_id: coordinatorId },
             });
             const companies = response.data.map((company: any, index: number) => ({
@@ -129,7 +128,7 @@ const CoordinatorCompany = () => {
 
         try {
             if (editingCompany) {
-                await axios.put(`${config.API_BASE_URL}/api/company/${editingCompany.id}`, {
+                await axios.put(`${API_BASE_URL}/api/company/${editingCompany.id}`, {
                     company_name: formData.companyName,
                     company_address: formData.address,
                     company_mentor: formData.mentorName,
@@ -137,7 +136,7 @@ const CoordinatorCompany = () => {
                 });
                 fetchCompanies();
             } else {
-                await axios.post(`${config.API_BASE_URL}/api/add-company`, {
+                await axios.post(`${API_BASE_URL}/api/add-company`, {
                     coordinator_id: coordinatorId,
                     company_name: formData.companyName,
                     company_address: formData.address,

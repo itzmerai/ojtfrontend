@@ -7,7 +7,6 @@ import SearchBar from "../../../../shared/components/searchbar/searchbar";
 import Modal from "../../../../shared/components/modals/modal";
 import Dropdown from "../../../../shared/components/dropdowns/dropdown";
 import NameInputField from "../../../../shared/components/fields/unif";
-import config from "../../../../config";
 
 interface Announcement {
   title: string;
@@ -18,6 +17,7 @@ interface Announcement {
 const CoordinatorAnnouncement: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [newAnnouncement, setNewAnnouncement] = useState({
     title: "",
     content: "",
@@ -54,7 +54,7 @@ const CoordinatorAnnouncement: React.FC = () => {
 
   const fetchAnnouncements = async () => {
     try {
-      const response = await fetch(`${config.API_BASE_URL}/api/announcementsni?coordinator_id=${coordinatorId}`);
+      const response = await fetch(`${API_BASE_URL}/api/announcementsni?coordinator_id=${coordinatorId}`);
       const data = await response.json();
       setAnnouncements(
         data.map((item: any) => ({
@@ -84,7 +84,7 @@ const CoordinatorAnnouncement: React.FC = () => {
     };
 
     try {
-      await fetch(`${config.API_BASE_URL}/api/announcements`, {
+      await fetch(`${API_BASE_URL}/api/announcements`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newAnnouncementData),

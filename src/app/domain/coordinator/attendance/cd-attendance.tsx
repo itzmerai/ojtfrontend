@@ -1,11 +1,10 @@
-// src/components/Attendance.tsx
+
 import React, { useState, useEffect } from "react";
 import "./cd-attendance.scss";
 import SearchBar from "../../../../shared/components/searchbar/searchbar"; // Adjust path as needed
 import DataTable from "../../../../shared/components/table/data-table";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import config from "../../../../config";
 
 const Attendance: React.FC = () => {
   interface AttendanceItem {
@@ -20,7 +19,7 @@ const Attendance: React.FC = () => {
     location?: string;
     address?: string;
   }
-  
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [attendanceData, setAttendanceData] = useState<AttendanceItem[]>([]);
   const [showMapModal, setShowMapModal] = useState(false);
   const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
@@ -33,7 +32,7 @@ const Attendance: React.FC = () => {
     if (storedCoordinatorId) {
       setIsLoading(true); 
       fetch(
-        `${config.API_BASE_URL}/api/timesheet?coordinator_id=${storedCoordinatorId}`
+        `${API_BASE_URL}/api/timesheet?coordinator_id=${storedCoordinatorId}`
       )
         .then((response) => {
           if (!response.ok) {

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../../../../shared/components/table/data-table";
 import axios from "axios";
-import config from "../../../../config";
 
 const SubmittedFiles: React.FC = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [, setCoordinatorId] = useState("");
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const SubmittedFiles: React.FC = () => {
   const fetchStudents = async (coordinatorId: string) => {
     try {
       const response = await axios.get(
-        `${config.API_BASE_URL}/students-with-uploads`,
+        `${API_BASE_URL}/students-with-uploads`,
         { params: { coordinatorId } }
       );
       setStudents(response.data);

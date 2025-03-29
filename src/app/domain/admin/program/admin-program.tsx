@@ -9,7 +9,6 @@ import Modal from "../../../../shared/components/modals/modal";
 import NameInputField from "../../../../shared/components/fields/unif";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import config from "../../../../config";
 
 const Program: React.FC = () => {
   const [programs, setPrograms] = useState<any[]>([]);
@@ -25,10 +24,10 @@ const Program: React.FC = () => {
   const [editingProgram, setEditingProgram] = useState<any | null>(null);
   const [durationFilter, setDurationFilter] = useState<string>("all");
   const [dynamicFilterOptions, setDynamicFilterOptions] = useState<Array<{ value: string; label: string }>>([]);
-  // Fetch programs from the server
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const fetchPrograms = useCallback(async () => {
     try {
-      const response = await axios.get(`${config.API_BASE_URL}/api/programs`);
+      const response = await axios.get(`${API_BASE_URL}/api/programs`);
       setPrograms(response.data);
     } catch (error) {
       console.error("Error fetching programs:", error);
@@ -98,7 +97,7 @@ const Program: React.FC = () => {
 
     try {
         const response = await axios.post(
-            `${config.API_BASE_URL}/api/add-schoolyear`,
+            `${API_BASE_URL}/api/add-schoolyear`,
             newSchoolYear
         );
         if (response.data.message === 'School year already exists.') {
@@ -149,7 +148,7 @@ const Program: React.FC = () => {
 
     try {
         await axios.post(
-            `${config.API_BASE_URL}/api/add-program`,
+            `${API_BASE_URL}/api/add-program`,
             newProgram
         );
         await fetchPrograms(); // Refresh the program list
@@ -186,7 +185,7 @@ const confirmUpdateProgram = async () => {
 
   try {
       await axios.put(
-          `${config.API_BASE_URL}/api/programs/${editingProgram.program_id}`,
+          `${API_BASE_URL}/api/programs/${editingProgram.program_id}`,
           updatedProgram
       );
       await fetchPrograms(); // Refresh the program list

@@ -5,13 +5,13 @@ import axios from "axios";
 import Sidebar from "../../../../shared/components/sidebar/coordinator-sidebar";
 import maleImage from "../../../../shared/assets/male.png";
 import femaleImage from "../../../../shared/assets/female.png";
-import config from "../../../../config"; // Ensure config is properly imported
 
 const CDashboard: React.FC = () => {
   const [activeItem, setActiveItem] = useState<string>("overview");
   const [coordinatorDetails, setCoordinatorDetails] = useState<any>(null);
   const [profileImage, setProfileImage] = useState<string>(maleImage);
   const [coordinatorId, setCoordinatorId] = useState<string>("");
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   // Get coordinator ID from localStorage
@@ -32,7 +32,7 @@ const CDashboard: React.FC = () => {
 
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/coordinatorwc?coordinator_id=${coordinatorId}`
+          `${API_BASE_URL}/api/coordinatorwc?coordinator_id=${coordinatorId}`
         );
 
         if (response.data) {

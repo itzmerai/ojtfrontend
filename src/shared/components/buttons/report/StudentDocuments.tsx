@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import config from "../../../../config";
 
 const StudentDocuments: React.FC = () => {
   const { studentId } = useParams();
   const [documents, setDocuments] = useState<any[]>([]);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/student-documents`,
+          `${API_BASE_URL}/student-documents`,
           { params: { studentId } }
         );
         setDocuments(response.data);

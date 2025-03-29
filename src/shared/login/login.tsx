@@ -9,7 +9,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import InputField from "../components/fields/inputfield";
 import logo from "../assets/logo-sidebar.png";
-import config from "../../config";
 
 const LoginForm: React.FC = () => {
   const [loginData, setLoginData] = useState({
@@ -22,7 +21,7 @@ const LoginForm: React.FC = () => {
     general?: string;
   }>({});
   const [showPassword, setShowPassword] = useState(false);
-
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const validateForm = () => {
     const newErrors: typeof errors = {};
     const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
@@ -53,7 +52,7 @@ const LoginForm: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(`${config.API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

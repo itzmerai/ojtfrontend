@@ -19,7 +19,6 @@ import Modal from "../../../../shared/components/modals/modal";
 import NameInputField from "../../../../shared/components/fields/unif";
 import Dropdown from "../../../../shared/components/dropdowns/dropdown";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import config from "../../../../config";
 const CoordinatorStudent = () => {
   const [studentData, setStudentData] = useState([]);
   const [filteredStudentData, setFilteredStudentData] = useState([]);
@@ -39,6 +38,7 @@ const CoordinatorStudent = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<any>(null); // New state for selected student
   const [companyFilter, setCompanyFilter] = useState<string>("all");
@@ -61,10 +61,10 @@ const CoordinatorStudent = () => {
 
       try {
         const [studentsRes, companiesRes] = await Promise.all([
-          axios.get(`${config.API_BASE_URL}/api/studentsni`, {
+          axios.get(`${API_BASE_URL}/api/studentsni`, {
             params: { coordinator_id: coordinatorId },
           }),
-          axios.get(`${config.API_BASE_URL}/api/companynameni`, {
+          axios.get(`${API_BASE_URL}/api/companynameni`, {
             params: { coordinator_id: coordinatorId },
           }),
         ]);
@@ -206,12 +206,12 @@ const CoordinatorStudent = () => {
       if (selectedStudent) {
         // Update existing student
         await axios.put(
-          `${config.API_BASE_URL}/api/add-student/${selectedStudent.student_id}`,
+          `${API_BASE_URL}/api/add-student/${selectedStudent.student_id}`,
           newStudent
         );
       } else {
         // Create new student
-        await axios.post(`${config.API_BASE_URL}/api/add-student`, newStudent);
+        await axios.post(`${API_BASE_URL}/api/add-student`, newStudent);
       }
   
       // Clear the form and close the modal
@@ -220,7 +220,7 @@ const CoordinatorStudent = () => {
   
       // Refresh the student data
       const updatedStudents = await axios.get(
-        `${config.API_BASE_URL}/api/studentsni`,
+        `${API_BASE_URL}/api/studentsni`,
         { params: { coordinator_id: coordinatorId } }
       );
       setStudentData(updatedStudents.data);

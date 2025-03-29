@@ -18,9 +18,9 @@ import {  FaLock, FaEye, FaEyeSlash, FaEdit } from "react-icons/fa";
 import NameInputField from "../../../../shared/components/fields/unif";
 import Dropdown from "../../../../shared/components/dropdowns/dropdown";
 import axios from "axios";
-import config from "../../../../config";
 
 const Coordinator: React.FC = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [programOptions, setProgramOptions] = useState<{ value: string | number; label: string }[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentModal, setCurrentModal] = useState<string>("details");
@@ -54,7 +54,7 @@ const Coordinator: React.FC = () => {
     const fetchCoordinators = async () => {
       try {
         const response = await axios.get(
-          `${config.API_BASE_URL}/api/coordinators`
+          `${API_BASE_URL}/api/coordinators`
         );
         setCoordinators(response.data); // Update state with the fetched data
       } catch (error) {
@@ -68,7 +68,7 @@ const Coordinator: React.FC = () => {
     const fetchData = async () => {
       try {
         const [programsRes] = await Promise.all([
-          axios.get(`${config.API_BASE_URL}/api/programname`),
+          axios.get(`${API_BASE_URL}/api/programname`),
         ]);
         setProgramOptions(
           programsRes.data.map((p: { program_id: string | number; program_name: string }) => ({
@@ -152,7 +152,7 @@ const handleModalSave = async () => {
   // New duplicate check
   try {
     const checkResponse = await axios.post(
-      `${config.API_BASE_URL}/api/add-coordinator/check-duplicates`,
+      `${API_BASE_URL}/api/add-coordinator/check-duplicates`,
       {
         coordinator_contact: contact,
         coordinator_email: email,
@@ -291,7 +291,7 @@ const handleModalSave = async () => {
   
       if (isEdit && currentCoordinatorId) {
         const response = await axios.put(
-          `${config.API_BASE_URL}/api/update-coordinator/${currentCoordinatorId}`,
+          `${API_BASE_URL}/api/update-coordinator/${currentCoordinatorId}`,
           coordinatorData,
           {
             headers: { Authorization: token },
@@ -300,7 +300,7 @@ const handleModalSave = async () => {
         console.log("Update Response:", response.data); // Debugging
       } else {
         const response = await axios.post(
-          `${config.API_BASE_URL}/api/add-coordinator`,
+          `${API_BASE_URL}/api/add-coordinator`,
           coordinatorData,
           {
             headers: { Authorization: token },
@@ -309,7 +309,7 @@ const handleModalSave = async () => {
         console.log("Add Response:", response.data); // Debugging
       }
   
-      const fetchResponse = await axios.get(`${config.API_BASE_URL}/api/coordinators`);
+      const fetchResponse = await axios.get(`${API_BASE_URL}/api/coordinators`);
       setCoordinators(fetchResponse.data);
   
       resetForm();
@@ -353,7 +353,7 @@ const handleModalSave = async () => {
       if (!selectedCoordinator.program_name) {
         try {
           const response = await axios.get(
-            `${config.API_BASE_URL}/api/programname`
+            `${API_BASE_URL}/api/programname`
           );
           const programs = response.data;
           const matchingProgram = programs.find(

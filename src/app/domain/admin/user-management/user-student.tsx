@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./user-student.scss";
 import SearchBar from "../../../../shared/components/searchbar/searchbar";
 import DataTable from "../../../../shared/components/table/data-table";
-import config from "../../../../config";
 
 const Student: React.FC = () => {
   interface Student {
@@ -15,6 +14,7 @@ const Student: React.FC = () => {
   }
 
   const [data, setData] = useState<Student[]>([]);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [programFilter, setProgramFilter] = useState<string>("all");
@@ -41,7 +41,6 @@ const Student: React.FC = () => {
     setSearchQuery(query);
   };
 
-  // Column configuration for DataTable
   const columns = [
     { header: "Student ID", key: "student_schoolid" },
     { header: "Coordinator", key: "coordinator_name" },
@@ -55,7 +54,7 @@ const Student: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${config.API_BASE_URL}/api/studentsall`);
+        const response = await fetch(`${API_BASE_URL}/api/studentsall`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
