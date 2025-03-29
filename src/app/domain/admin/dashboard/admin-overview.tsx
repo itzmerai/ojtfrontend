@@ -178,7 +178,7 @@ const Overview: React.FC = () => {
       <div className="chart-two">
       <div className="chart-container">
              <h2>Program-wise Student Distribution</h2>
-              <div style={{ height: 250 }}>
+              <div style={{ height: 280 }}>
                 <ProgramBarChart data={programDistribution} />
               </div>
       </div>

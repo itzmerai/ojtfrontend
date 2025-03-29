@@ -509,13 +509,17 @@ const handleModalSave = async () => {
                 <label htmlFor="program">Program</label>
                 <Dropdown
                   options={programOptions.map((p) => p.label)}
-                  value={program ? String(program) : ""} // Ensure the value is a string
-                  onChange={(selectedLabel) => {
-                    const selectedProgram = programOptions.find(
-                      (p) => p.label === selectedLabel
-                    );
-                    setProgram(selectedProgram ? selectedProgram.value : ""); // Set the program_id when a program is selected
-                  }}
+                    value={
+                      program
+                        ? programOptions.find((p) => p.value === program)?.label || ""
+                        : ""
+                    }
+                    onChange={(selectedLabel) => {
+                      const selectedProgram = programOptions.find(
+                        (p) => p.label === selectedLabel
+                      );
+                      setProgram(selectedProgram ? selectedProgram.value : "");
+                    }}
                 />
               </div>
             </div>

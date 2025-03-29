@@ -19,6 +19,7 @@ const BarChartCard: React.FC<BarChartCardProps> = ({ data }) => {
         backgroundColor: "rgba(248, 49, 9, 0.5)",
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
+        borderRadius:5,
       },
     ],
   };

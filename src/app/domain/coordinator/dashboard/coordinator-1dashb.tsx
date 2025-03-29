@@ -70,6 +70,7 @@ const CDashboard: React.FC = () => {
         fontWeight: 600,
         fontSize: "18px",
         paddingTop: "2em",
+      paddingRight:"1.4em",
       }}
     >
       {/* Display coordinator's first name or default text */}
@@ -79,12 +80,13 @@ const CDashboard: React.FC = () => {
       src={profileImage}
       alt="Coordinator Profile"
       style={{
-        width: "70px",
+        width: "60px",
         height: "70px",
         borderRadius: "50%",
         objectFit: "cover",
         position: "relative",
         top: "1em",
+        right: "2.3em"
       }}
     />
   </div>
